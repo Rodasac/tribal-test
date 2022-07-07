@@ -1,0 +1,16 @@
+services:
+  python:
+    image: python:alpine
+    build:
+      context: .
+      dockerfile: ./python.Dockerfile
+    ports:
+      - "5000:5000"
+  
+  node:
+    image: node:alpine
+    build:
+      context: .
+      dockerfile: ./node.Dockerfile
+    ports:
+      - "3000:3000"
