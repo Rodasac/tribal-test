@@ -5,3 +5,5 @@ In order to executes the test we're going to use docker for simplicity, in a ter
 Python URL: [http://localhost:5000](http://localhost:5000)
 
 Node URL: [http://localhost:3000](http://localhost:3000)
+
+Golang URL: [http://localhost:8080](http://localhost:8080)

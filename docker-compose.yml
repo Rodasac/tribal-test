@@ -14,3 +14,11 @@ services:
       dockerfile: ./node.Dockerfile
     ports:
       - "3000:3000"
+  
+  go:
+    image: go
+    build:
+      context: .
+      dockerfile: ./go.Dockerfile
+    ports:
+      - "8080:8080"

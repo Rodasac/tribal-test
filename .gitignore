@@ -3,3 +3,4 @@ node/node_modules/
 */**.pyc
 __pycache__/
 python/__pycache__/
+go/main

@@ -94,9 +94,10 @@ func jokesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", jokesHandler)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", jokesHandler)
 
 	log.Println("Listening on http://localhost:8080")
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", mux)
 	log.Fatal(err)
 }
