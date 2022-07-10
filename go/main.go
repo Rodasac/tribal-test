@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -22,7 +23,9 @@ type JokeResponse struct {
 	Len   int    `json:"len"`
 }
 
-func getJoke(c chan Joke) {
+func getJoke(c chan Joke, wg *sync.WaitGroup) {
+	defer (*wg).Done()
+
 	res, err := http.Get("https://api.chucknorris.io/jokes/random")
 	if err != nil {
 		return
@@ -39,17 +42,23 @@ func getJoke(c chan Joke) {
 	c <- joke
 }
 
-func makeRequest() (map[string]Joke, error) {
-	c := make(chan Joke, 25)
+func makeRequest(chanLenght int) (map[string]Joke, error) {
+	c := make(chan Joke, chanLenght)
+	var wg sync.WaitGroup
 
-	for i := 0; i < 25; i++ {
-		go getJoke(c)
+	for i := 0; i < chanLenght; i++ {
+		wg.Add(1)
+		go getJoke(c, &wg)
 	}
 
-	jokes := make(map[string]Joke, 25)
+	go func() {
+		wg.Wait()
+		close(c)
+	}()
 
-	select {
-	case joke := <-c:
+	jokes := make(map[string]Joke, chanLenght)
+
+	for joke := range c {
 		jokes[joke.Id] = joke
 	}
 
@@ -61,7 +70,8 @@ func jokesHandler(w http.ResponseWriter, r *http.Request) {
 	jokesSlices := make([]Joke, 0)
 
 	for len(jokesSlices) < 25 {
-		jokes, err := makeRequest()
+		log.Println("Iterations: ", 25-len(jokesSlices))
+		jokes, err := makeRequest(25 - len(jokesSlices))
 		if err != nil {
 			log.Println(err)
 			w.Header().Set("Content-Type", "text/plain")
