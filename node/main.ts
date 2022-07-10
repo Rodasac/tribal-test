@@ -2,7 +2,7 @@ import express from "express";
 import fetch from "node-fetch";
 
 interface Joke {
-  id: number;
+  id: string;
   url: string;
   value: string;
   icon_url: string;
